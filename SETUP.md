@@ -30,7 +30,7 @@ $ php artisan key:generate
 # build assets
 $ npm run dev
 # Generating assets while developing
-$ npm run watc
+$ npm run watch
 ```
 
 ### Local Development Server
