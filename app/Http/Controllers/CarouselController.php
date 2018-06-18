@@ -21,48 +21,60 @@
 namespace App\Http\Controllers;
 
 use App\Carousel;
+use App\File;
 use Illuminate\Http\Request;
 
 class CarouselController extends Controller
 {
+    protected $route;
+    protected $count;
+    protected $sort;
+    protected $path;
+
+    public function __construct()
+    {
+        $this->route = redirect(route('dashboard.carousel'));
+        $this->count = 0;
+        $this->sort = 0;
+        $this->path = 'carousel';
+    }
+
     public function store(Request $request)
     {
         $request->validate([
             'carousel_image' => 'required|mimes:jpeg,jpg,png|dimensions:width=900,height=250',
         ]);
 
-        if (Carousel::count() === 0) {
-            $sort_order = Carousel::count();
-        } else {
-            $sort_order = Carousel::orderBy('sort_order', 'desc')->firstOrFail()->sort_order + 1;
+        if (Carousel::count() > 0) {
+            $this->sort = Carousel::orderBy('sort_order', 'desc')->firstOrFail()->sort_order + 1;
         }
 
         Carousel::create([
-            'image'      => Carousel::fileToStore($request->file('carousel_image'), 'carousel'),
-            'sort_order' => $sort_order,
+            'image'      => File::toStore($request->file('carousel_image'), $this->path),
+            'sort_order' => $this->sort,
         ]);
 
-        return redirect(route('dashboard.carousel'));
+        return $this->route;
     }
 
     public function update_sortorder(Request $request)
     {
-        for ($i = 0; $i < count(explode(',', $request->input('sort_order'))); $i++) {
-            Carousel::where('id', explode(',', $request->input('sort_order'))[$i])
-                ->update(['sort_order' => $i]);
+        for ($this->count = 0; $this->count < count(explode(',', $request->input('sort_order'))); $this->count++) {
+            Carousel::where('id', explode(',', $request->input('sort_order'))[$this->count])
+                ->update(['sort_order' => $this->count]);
         }
 
-        return redirect(route('dashboard.carousel'));
+        return $this->route;
     }
 
     public function destroy($id)
     {
-        Carousel::fileToDelete(Carousel::where('id', $id)->firstOrFail()->image, 'carousel');
+        File::toDelete(Carousel::where('id', $id)->firstOrFail()->image, $this->path);
 
         Carousel::where('id', $id)
             ->firstOrFail()
             ->delete();
 
-        return redirect(route('dashboard.carousel'));
+        return $this->route;
     }
 }
