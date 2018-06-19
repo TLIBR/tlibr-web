@@ -78,3 +78,5 @@ Route::name('dashboard.')->group(function () {
 |--------------------------------------------------------------------------
 */
 Route::get('/news/post', 'PagesController@newsPost')->name('news.post');
+
+Auth::routes();

@@ -12,6 +12,7 @@ class VerifyCsrfToken extends Middleware
      * @var array
      */
     protected $except = [
-        //
+        'http://localhost:8000/logout',
+        'http://127.0.0.1:8000/logout',
     ];
 }

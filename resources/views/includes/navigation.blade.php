@@ -65,14 +65,13 @@
                             Logout
                         </a>
 
-                        {{-- {!! Form::open([
+                        {!! Form::open([
                             'id'     => 'logout-form',
                             'route'  => 'logout',
                             'method' => 'POST', 
-                            'style'  => 'display: none;',
+                            'style'  => 'visibility: none;',
                         ]) !!}
-                            @csrf
-                        {!! Form::close() !!} --}}
+                        {!! Form::close() !!}
                     </div>
                 </li>
             </ul>

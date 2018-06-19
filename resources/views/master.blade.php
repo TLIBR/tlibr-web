@@ -16,7 +16,7 @@
     along with TLIBR Web. If not, see <http://www.gnu.org/licenses/>.
 --}}
 <!DOCTYPE html>
-<html lang="{{ app()->getLocale() }}">
+<html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
 <head>
     @include('includes.metadata')
     <title>

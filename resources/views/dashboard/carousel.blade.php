@@ -83,10 +83,10 @@
                                 </div>
 
                                 {!! Form::open([
-                                    'route'  => ['dashboard.carousel.delete', $carousel->id],
-                                    'id'     => 'delete-image-'.$carousel->id,
+                                    'route' => ['dashboard.carousel.delete', $carousel->id],
+                                    'id' => 'delete-image-'.$carousel->id,
                                     'method' => 'POST',
-                                    'style'  => 'visibility: none;',
+                                    'style' => 'visibility: hidden;',
                                 ]) !!}
                                     {!! Form::hidden('_method', 'DELETE') !!}
                                 {!! Form::close() !!}

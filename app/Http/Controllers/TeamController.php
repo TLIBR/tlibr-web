@@ -25,44 +25,63 @@ use Illuminate\Http\Request;
 
 class TeamController extends Controller
 {
+    protected $route;
+    protected $count = 0;
+    protected $sort = 0;
+
+    public function __construct()
+    {
+        $this->route = redirect(route('dashboard.team'));
+
+        if (Team::count() > 0) {
+            $this->sort = Team::orderBy('sort_order', 'desc')->firstOrFail()->sort_order + 1;
+        }
+    }
+
     public function store(Request $request)
     {
-        $request->validate([
-            'name'        => 'required|unique:team',
-            'description' => 'required',
-        ]);
+        try {
+            $request->validate([
+                'name' => 'required|unique:team',
+                'description' => 'required',
+            ]);
 
-        if (Team::count() === 0) {
-            $sort_order = Team::count();
-        } else {
-            $sort_order = Team::orderBy('sort_order', 'desc')->firstOrFail()->sort_order + 1;
+            Team::create([
+                'name' => $request->input('name'),
+                'description' => $request->input('description'),
+                'sort_order' => $this->sort,
+            ]);
+
+            return $this->route;
+        } catch (\Exception $e) {
+            return $e->getMessage();
         }
-
-        Team::create([
-            'name'        => $request->input('name'),
-            'description' => $request->input('description'),
-            'sort_order'  => $sort_order,
-        ]);
-
-        return redirect(route('dashboard.team'));
     }
 
     public function update_sortorder(Request $request)
     {
-        for ($i = 0; $i < count(explode(',', $request->input('sort_order'))); $i++) {
-            Team::where('id', explode(',', $request->input('sort_order'))[$i])
-                ->update(['sort_order' => $i]);
-        }
+        try {
+            for ($this->count = 0; $this->count < count(explode(',', $request->input('sort_order'))); $this->count++) {
+                Team::where('id', explode(',', $request->input('sort_order'))[$this->count])
+                    ->update(['sort_order' => $this->count]);
+            }
 
-        return redirect(route('dashboard.team'));
+            return $this->route;
+        } catch (\Exception $e) {
+            return $e->getMessage();
+        }
     }
 
     public function destroy($id)
     {
-        Team::where('id', $id)
-            ->firstOrFail()
-            ->delete();
+        try {
+            Team::where('id', $id)
+                ->firstOrFail()
+                ->delete();
 
-        return redirect(route('dashboard.team'));
+            return $this->route;
+        } catch (\Exception $e) {
+            return $e->getMessage();
+        }
     }
 }
